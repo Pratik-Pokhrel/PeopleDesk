@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:15
+    container_name: peopledesk_db
+    restart: no
+
+    environment:
+      POSTGRES_DB: {YOUR_DB_NAME}
+      POSTGRES_USER: {YOUR_DB_USER}
+      POSTGRES_PASSWORD: {YOUR_DB_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {YOUR_DB_USER} -d {YOUR_DB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+    networks:
+      - backend
+
+  adminer:
+    image: adminer:latest
+    container_name: peopledesk_adminer
+    restart: no
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
