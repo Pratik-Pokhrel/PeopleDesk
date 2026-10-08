@@ -1,16 +1,26 @@
-# React + Vite
+# PeopleDesk frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Tailwind CSS
 
-Currently, two official plugins are available:
+The frontend uses Tailwind CSS v4 with the Vite plugin. The integration is already
+configured; there is no `tailwind.config.js` or PostCSS configuration to create.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+To run the frontend from the repository root:
 
-## React Compiler
+1. Change into the frontend directory: `cd frontend`
+2. Install the dependencies: `npm install`
+3. Start the development server: `npm run dev`
+4. Open the local URL printed by Vite.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Tailwind is loaded from `src/index.css`. Use utility classes in React `className`
+attributes, for example:
 
-## Expanding the ESLint configuration
+```jsx
+<button className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+  Save changes
+</button>
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The existing global styles are in the CSS `base` layer and the starter component
+styles are in the `components` layer, so Tailwind utilities can override them.
+Use `npm run build` to check a production build and `npm run lint` to run ESLint.
