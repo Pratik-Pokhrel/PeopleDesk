@@ -4,12 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "test": "vitest run",
-    "prisma:migrate": "dotenv -e ../.env -- prisma migrate dev",
-    "prisma:generate": "dotenv -e ../.env -- prisma generate",
-    "prisma:studio": "dotenv -e ../.env -- prisma studio"
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
@@ -21,8 +22,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "dotenv-cli": "^7.4.2",
     "prisma": "^6.0.0",
-    "vitest": "^2.1.0"
+    "vitest": "^4.1.11"
   }
 }
