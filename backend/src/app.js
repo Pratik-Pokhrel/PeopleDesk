@@ -4,6 +4,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { env } from "./config/env.js";
 import { prisma } from "./config/db.js";
+import { notFoundHandler, errorHandler } from "./middleware/error-handler.js";
+import { employeeRoutes } from "./modules/employees/index.js";
 
 const app = express();
 
@@ -17,5 +19,11 @@ app.get("/api/health", async (req, res) => {
   await prisma.$queryRaw`SELECT 1`;
   res.json({ status: "ok", database: "up" });
 });
+
+app.use("/api/employees", employeeRoutes);
+
+// These 2 error handlers must always come at the end, after defining all routes
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;
