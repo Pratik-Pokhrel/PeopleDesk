@@ -3,7 +3,7 @@ import { env } from "./config/env.js";
 import { connectDB, disconnectDB } from "./config/db.js";
 
 async function start() {
-  // No point in serving requests without a database
+  // If database connection fails, server fails to boot and exits
   try {
     await connectDB();
   } catch (err) {
@@ -15,7 +15,7 @@ async function start() {
     console.log(`API running on http://localhost:${env.PORT}`);
   });
 
-  // Stop accepting requests, release the DB connection, then exit
+  // This stops the server from accepting requests and closes existing connections
   const shutdown = (signal) => {
     console.log(`${signal} received, shutting down`);
     server.close(async () => {
@@ -23,8 +23,8 @@ async function start() {
       process.exit(0);
     });
   };
-  process.on("SIGINT", () => shutdown("SIGINT"));
-  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT")); // SIGINT = Signal Interrupt
+  process.on("SIGTERM", () => shutdown("SIGTERM")); // SIGTERM = Signal Termination
 }
 
 start();
