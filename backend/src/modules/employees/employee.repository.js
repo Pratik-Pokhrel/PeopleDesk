@@ -28,4 +28,10 @@ export const employeeRepository = {
   findByEmail: (email) => prisma.employee.findUnique({ where: { email } }),
 
   create: (data) => prisma.employee.create({ data, select: publicSelect }),
+
+  update: (id, data) =>
+    prisma.employee.update({ where: { id }, data, select: publicSelect }),
+
+  countActiveReports: (managerId) =>
+    prisma.employee.count({ where: { managerId, isActive: true } }),
 };
