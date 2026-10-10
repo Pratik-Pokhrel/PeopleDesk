@@ -18,7 +18,7 @@ export const createEmployeeSchema = z.object({
    and unknown keys are dropped by Zod. "null" clears department or manager.
    And the service rejects any empty update
   */
-export const updateEmployeeSchema = a
+export const updateEmployeeSchema = z
   .object({
     firstName: z.string().trim().min(1),
     lastName: z.string().trim().min(1),

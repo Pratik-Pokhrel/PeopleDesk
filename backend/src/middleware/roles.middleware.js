@@ -5,7 +5,7 @@ import { AppError } from "../utils/errors.js";
 export const requireRole =
   (...allowerdRoles) =>
   (req, res, next) => {
-    if ((!req, res, next)) throw AppError.unauthorized();
+    if (!req.user) throw AppError.unauthorized();
     if (!allowerdRoles.includes(req.user.role)) throw AppError.forbidden();
     next();
   };
