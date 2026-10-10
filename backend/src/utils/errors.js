@@ -20,15 +20,19 @@ export class AppError extends Error {
   static unauthorized(message = "Authentication Reqired") {
     return new AppError(401, "AUTHENTICATION_REQUIRED", message);
   }
+
   static forbidden(message = "You are not allowed to do this action") {
     return new AppError(403, "FORBIDDEN", message);
   }
+
   static notFound(message = "Resource Not Found") {
     return new AppError(404, "NOT_FOUND", message);
   }
+
   static conflict(message) {
     return new AppError(409, "CONFLICT", message);
   }
+
   static internal(message = "Server Error : Something went wrong") {
     return new AppError(500, "INTERNAL_SERVER_ERROR", message);
   }
