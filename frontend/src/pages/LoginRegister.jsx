@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import logo from '../assets/logo.ico'
+import { useAuth } from '../context/useAuth.js'
+import HomePage from './HomePage.jsx'
 
 function EyeIcon({ hidden }) {
   return hidden ? (
@@ -23,13 +25,23 @@ function ArrowRightIcon() {
 }
 
 
-function Field({ label, type = 'text', placeholder, autoComplete, minLength, trailingAction }) {
+function Field({
+  label,
+  name,
+  type = 'text',
+  placeholder,
+  autoComplete,
+  minLength,
+  required = true,
+  trailingAction,
+}) {
   return (
     <label className="flex flex-col gap-2 text-sm font-medium text-[#353d43]">
       {label}
       <span className="relative">
         <input
-          required
+          name={name}
+          required={required}
           type={type}
           placeholder={placeholder}
           autoComplete={autoComplete}
@@ -42,14 +54,59 @@ function Field({ label, type = 'text', placeholder, autoComplete, minLength, tra
   )
 }
 
-function LoginPage() {
+function LoginRegister() {
   const [mode, setMode] = useState('login')
   const [showPassword, setShowPassword] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formError, setFormError] = useState('')
+  const [notice, setNotice] = useState('')
+  const { user, login, register } = useAuth()
   const isRegister = mode === 'register'
 
   function changeMode(nextMode) {
     setMode(nextMode)
     setShowPassword(false)
+    setFormError('')
+    setNotice('')
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setIsSubmitting(true)
+    setFormError('')
+    setNotice('')
+
+    const form = event.currentTarget
+    const formData = new FormData(form)
+    const email = formData.get('email').trim()
+    const password = formData.get('password')
+
+    try {
+      if (isRegister) {
+        const department = formData.get('department').trim()
+        await register({
+          email,
+          password,
+          firstName: formData.get('firstName').trim(),
+          lastName: formData.get('lastName').trim(),
+          ...(department ? { department } : {}),
+        })
+        form.reset()
+        setMode('login')
+        setShowPassword(false)
+        setNotice('Your account has been created. Please sign in.')
+      } else {
+        await login({ email, password })
+      }
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : 'Unable to complete your request.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (user) {
+    return <HomePage />
   }
 
   return (
@@ -132,25 +189,52 @@ function LoginPage() {
               </div>
 
               <div id="auth-panel" role="tabpanel" aria-labelledby={isRegister ? 'register-tab' : 'login-tab'}>
-                <form className="flex flex-col gap-4" onSubmit={(event) => event.preventDefault()}>
+                {formError && (
+                  <p role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {formError}
+                  </p>
+                )}
+                {notice && (
+                  <p role="status" className="mb-4 rounded-xl border border-[#b8ddcd] bg-[#eef7f2] px-4 py-3 text-sm text-[#237c5e]">
+                    {notice}
+                  </p>
+                )}
+                <form key={mode} className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   {isRegister && (
-                    <Field label="Full name" placeholder="Alex Morgan" autoComplete="name" />
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field
+                        label="First name"
+                        name="firstName"
+                        placeholder="Alex"
+                        autoComplete="given-name"
+                      />
+                      <Field
+                        label="Last name"
+                        name="lastName"
+                        placeholder="Morgan"
+                        autoComplete="family-name"
+                      />
+                    </div>
                   )}
                   <Field
                     label="Work email"
+                    name="email"
                     type="email"
                     placeholder="youremail@company.com"
                     autoComplete="email"
                   />
                   {isRegister && (
                     <Field
-                      label="Company name"
-                      placeholder="XYZ & Co."
-                      autoComplete="organization"
+                      label="Department (optional)"
+                      name="department"
+                      placeholder="e.g. People Operations"
+                      autoComplete="organization-title"
+                      required={false}
                     />
                   )}
                   <Field
                     label="Password"
+                    name="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder={isRegister ? 'At least 8 characters' : 'Enter your password'}
                     autoComplete={isRegister ? 'new-password' : 'current-password'}
@@ -169,10 +253,15 @@ function LoginPage() {
 
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className="mt-2 flex h-12 items-center justify-center gap-2 rounded-xl bg-[#183047] text-sm font-semibold text-white shadow-[0_5px_12px_rgba(24,48,71,0.14)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#10253a] hover:shadow-[0_8px_18px_rgba(24,48,71,0.18)] active:translate-y-0 active:scale-[0.99] focus:outline-none focus:ring-4 focus:ring-[#183047]/20"
                   >
-                    {isRegister ? 'Create workspace' : 'Sign in'}
-                    <ArrowRightIcon />
+                    {isSubmitting
+                      ? 'Please wait...'
+                      : isRegister
+                        ? 'Create account'
+                        : 'Sign in'}
+                    {!isSubmitting && <ArrowRightIcon />}
                   </button>
                 </form>
               </div>
@@ -186,4 +275,4 @@ function LoginPage() {
   )
 }
 
-export default LoginPage
+export default LoginRegister
