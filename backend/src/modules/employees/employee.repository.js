@@ -27,6 +27,14 @@ export const employeeRepository = {
 
   findByEmail: (email) => prisma.employee.findUnique({ where: { email } }),
 
+  // Direct reports of one manager which is used by the leave module for the approval list
+  findReports: (managerId) =>
+    prisma.employee.findMany({
+      where: { managerId },
+      select: publicSelect,
+      orderBy: { createdAt: "asc" },
+    }),
+
   create: (data) => prisma.employee.create({ data, select: publicSelect }),
 
   update: (id, data) =>

@@ -43,6 +43,9 @@ async function assertNoActiveReports(employeeId) {
 export const employeeService = {
   list: () => employeeRepository.findAll(),
 
+  // Direct reports of a manager, used by the leave module for the approval list
+  listReports: (managerId) => employeeRepository.findReports(managerId),
+
   getById,
 
   // Employees can only view other employees where as managers and admins can view all
