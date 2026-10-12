@@ -11,8 +11,8 @@ async function start() {
     process.exit(1);
   }
 
-  const server = app.listen(env.PORT, () => {
-    console.log(`API running on http://localhost:${env.PORT}`);
+  const server = app.listen(env.PORT, "0.0.0.0", () => {
+    console.log(`API listening on port ${env.PORT}`);
   });
 
   // This stops the server from accepting requests and closes existing connections

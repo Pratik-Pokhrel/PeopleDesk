@@ -5,7 +5,10 @@ import morgan from "morgan";
 import { env } from "./config/env.js";
 import { prisma } from "./config/db.js";
 import { notFoundHandler, errorHandler } from "./middleware/error-handler.js";
-import { employeeRoutes } from "./modules/employees/index.js";
+import authRoutes from "./modules/auth/auth.routes.js";
+import employeeRoutes from "./modules/employees/employee.routes.js";
+import attendanceRoutes from "./modules/attendance/attendance.routes.js";
+import leaveRoutes from "./modules/leave/leave.routes.js";
 
 const app = express();
 
@@ -20,7 +23,10 @@ app.get("/api/health", async (req, res) => {
   res.json({ status: "ok", database: "up" });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/employees", employeeRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/leave", leaveRoutes);
 
 // These 2 error handlers must always come at the end, after defining all routes
 app.use(notFoundHandler);

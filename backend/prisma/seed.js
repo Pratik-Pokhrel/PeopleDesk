@@ -2,6 +2,7 @@
 import "dotenv/config.js";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
+import { seedLeave } from "./seed.leave.js";
 
 const prisma = new PrismaClient();
 const DEV_PASSWORD = "321@drowssap";
@@ -60,6 +61,9 @@ async function main() {
   console.log(
     `Seeded 1 admin, 1 manager and ${team.length} employees. Password for all: ${DEV_PASSWORD}`,
   );
+
+  // the seed.leave.js import must run after the employee seed
+  await seedLeave(prisma);
 }
 
 main()

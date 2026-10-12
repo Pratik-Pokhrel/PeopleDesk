@@ -1,32 +1,102 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
-    ADMIN
-    MANAGER
-    EMPLOYEE
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
 }
 
 model Employee {
-    id           String     @id @default(uuid())
-    email        String     @unique
-    passwordHash String     @map("password_hash")
-    firstName    String     @map("first_name")
-    lastName     String     @map("last_name")
-    role         Role       @default(EMPLOYEE)
-    department   String?
-    isActive     Boolean    @default(true) @map("is_active")
-    managerId    String?    @map("manager_id")
-    manager      Employee?  @relation("ManagerReports", fields: [managerId], references: [id])
-    reports      Employee[] @relation("ManagerReports")
-    createdAt    DateTime   @default(now()) @map("created_at")
-    updatedAt    DateTime   @updatedAt @map("updated_at")
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  firstName    String     @map("first_name")
+  lastName     String     @map("last_name")
+  role         Role       @default(EMPLOYEE)
+  department   String?
+  isActive     Boolean    @default(true) @map("is_active")
+  managerId    String?    @map("manager_id")
+  manager      Employee?  @relation("ManagerReports", fields: [managerId], references: [id])
+  reports      Employee[] @relation("ManagerReports")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
 
-    @@map("employees")
+  attendanceRecords     AttendanceRecord[]
+  leaveBalances         LeaveBalance[]
+  leaveRequests         LeaveRequest[]     @relation("LeaveRequestEmployee")
+  reviewedLeaveRequests LeaveRequest[]     @relation("LeaveRequestReviewer")
+
+  @@map("employees")
+}
+
+model AttendanceRecord {
+  id         String    @id @default(uuid())
+  employeeId String    @map("employee_id")
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+  checkIn    DateTime  @map("check_in")
+  checkOut   DateTime? @map("check_out")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([employeeId, checkIn])
+  @@map("attendance_records")
+}
+
+model LeaveType {
+  id          String         @id @default(uuid())
+  name        String         @unique
+  defaultDays Int            @map("default_days")
+  balances    LeaveBalance[]
+  requests    LeaveRequest[]
+
+  @@map("leave_types")
+}
+
+// One balance per employee, per leave type, per calendar year
+model LeaveBalance {
+  id          String    @id @default(uuid())
+  employeeId  String    @map("employee_id")
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  leaveTypeId String    @map("leave_type_id")
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
+  year        Int
+  totalDays   Int       @map("total_days")
+  usedDays    Int       @default(0) @map("used_days")
+
+  @@unique([employeeId, leaveTypeId, year])
+  @@map("leave_balances")
+}
+
+model LeaveRequest {
+  id           String      @id @default(uuid())
+  employeeId   String      @map("employee_id")
+  employee     Employee    @relation("LeaveRequestEmployee", fields: [employeeId], references: [id])
+  leaveTypeId  String      @map("leave_type_id")
+  leaveType    LeaveType   @relation(fields: [leaveTypeId], references: [id])
+  startDate    DateTime    @map("start_date") @db.Date
+  endDate      DateTime    @map("end_date") @db.Date
+  // Working days are stored at creation time so old requests stay correct even if the weekend rule changes later
+  days         Int
+  reason       String?
+  status       LeaveStatus @default(PENDING)
+  reviewedById String?     @map("reviewed_by_id")
+  reviewedBy   Employee?   @relation("LeaveRequestReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?   @map("reviewed_at")
+  createdAt    DateTime    @default(now()) @map("created_at")
+
+  @@index([employeeId, status])
+  @@map("leave_requests")
 }
