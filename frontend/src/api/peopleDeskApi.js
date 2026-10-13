@@ -69,14 +69,17 @@ function queryString(values) {
 
 export const employeesApi = {
   list: (token) => request("/employees", token),
+
   create: (token, employee) =>
     request("/employees", token, jsonRequest("POST", token, employee)),
+
   update: (token, id, changes) =>
     request(
       `/employees/${encodeURIComponent(id)}`,
       token,
       jsonRequest("PATCH", token, changes),
     ),
+
   deactivate: (token, id) =>
     request(`/employees/${encodeURIComponent(id)}/deactivate`, token, {
       method: "PATCH",
@@ -86,30 +89,40 @@ export const employeesApi = {
 export const attendanceApi = {
   checkIn: (token) =>
     request("/attendance/check-in", token, { method: "POST" }),
+
   checkOut: (token) =>
     request("/attendance/check-out", token, { method: "POST" }),
+
   mine: (token, month) =>
     request(`/attendance/me${queryString({ month })}`, token),
+
   summary: (token, params = {}) =>
     request(`/attendance/summary${queryString(params)}`, token),
 };
 
 export const leaveApi = {
   types: (token) => request("/leave/types", token),
+
   balances: (token, year) =>
     request(`/leave/balances/me${queryString({ year })}`, token),
+
   createRequest: (token, body) =>
     request("/leave/requests", token, jsonRequest("POST", token, body)),
+
   mine: (token) => request("/leave/requests/me", token),
+
   pending: (token) => request("/leave/requests/pending", token),
+
   approve: (token, id) =>
     request(`/leave/requests/${encodeURIComponent(id)}/approve`, token, {
       method: "POST",
     }),
+
   reject: (token, id) =>
     request(`/leave/requests/${encodeURIComponent(id)}/reject`, token, {
       method: "POST",
     }),
+
   cancel: (token, id) =>
     request(`/leave/requests/${encodeURIComponent(id)}/cancel`, token, {
       method: "PATCH",
