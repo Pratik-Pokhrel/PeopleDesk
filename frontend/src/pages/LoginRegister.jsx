@@ -24,7 +24,6 @@ function ArrowRightIcon() {
   )
 }
 
-
 function Field({
   label,
   name,
@@ -116,7 +115,6 @@ function LoginRegister() {
           <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white">
             <img src={logo} alt="" className="size-full rounded-full object-cover" />
           </span>
-
         </a>
         <p className="hidden text-sm text-[#727d79] sm:block">
           {isRegister ? 'Already have an account?' : 'New to PeopleDesk?'}{' '}
@@ -199,6 +197,7 @@ function LoginRegister() {
                     {notice}
                   </p>
                 )}
+
                 <form key={mode} className="flex flex-col gap-4" onSubmit={handleSubmit}>
                   {isRegister && (
                     <div className="grid gap-4 sm:grid-cols-2">
@@ -265,8 +264,6 @@ function LoginRegister() {
                   </button>
                 </form>
               </div>
-
-
             </div>
           </div>
         </div>
