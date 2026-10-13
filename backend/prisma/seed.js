@@ -27,6 +27,14 @@ async function main() {
     department: "System-Admin",
   });
 
+  await upsertEmployee({
+    email: "admin2@peopledesk.test",
+    firstName: "Second",
+    lastName: "Admin",
+    role: "ADMIN",
+    department: "System-Admin",
+  });
+
   const manager = await upsertEmployee({
     email: "manager@peopledesk.test",
     firstName: "Pratik",
@@ -59,7 +67,7 @@ async function main() {
   }
 
   console.log(
-    `Seeded 1 admin, 1 manager and ${team.length} employees. Password for all: ${DEV_PASSWORD}`,
+    `Seeded 2 admins, 1 manager and ${team.length} employees. Password for all: ${DEV_PASSWORD}`,
   );
 
   // the seed.leave.js import must run after the employee seed

@@ -38,11 +38,13 @@ export const leaveController = {
     res.json({ data: requests });
   },
 
+  // Sets or overrides total leave allowance for a specific employee, leave type, and calendar year
   async setBalance(req, res) {
     const balance = await leaveService.setBalance(req.validated.body);
     res.json({ data: balance });
   },
 
+  // Approves a pending leave request and updates the employee's used leave days balance
   async approve(req, res) {
     const request = await leaveService.approve(
       req.user,
@@ -51,6 +53,7 @@ export const leaveController = {
     res.json({ data: request });
   },
 
+  // Rejects a pending leave request without modifying the employee's leave balance
   async reject(req, res) {
     const request = await leaveService.reject(
       req.user,
@@ -59,6 +62,7 @@ export const leaveController = {
     res.json({ data: request });
   },
 
+  // Cancels an active or pending leave request and restores any previously deducted leave days
   async cancel(req, res) {
     const request = await leaveService.cancel(
       req.user,
