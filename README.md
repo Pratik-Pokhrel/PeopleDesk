@@ -2,7 +2,7 @@
 
 An HR management system with Employee Management, Attendance and Leave Management modules, plus JWT login with three roles (`ADMIN`, `MANAGER`, `EMPLOYEE`). The backend is Node.js + Express with PostgreSQL and Prisma, and the frontend is React + Vite.
 
-This README covers how to set up and run the project. Architecture, data models, API usage, assumptions and scaling notes are in the separate documentation PDF submitted with this repository.
+This README covers how to set up and run the project. 
 
 ## Contents
 
